@@ -1,18 +1,48 @@
-import wiringpi as wp
+import RPi.GPIO as GPIO
 import time
 
-# Setup WiringPi library
-wp.wiringPiSetup()
-
-# Configure SPI interface
-SPI_CHANNEL = 0
-SPI_SPEED = 800000  # Hz
-wp.wiringPiSPISetup(SPI_CHANNEL, SPI_SPEED)
+# Setup GPIO pins
+GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False)
+PIN = 10  # use GPIO pin 10 (BCM numbering)
+GPIO.setup(PIN, GPIO.OUT)
 
 # Define function to set LED color
 def set_color(r, g, b):
-    data = [0x00, b, g, r]
-    wp.wiringPiSPIDataRW(SPI_CHANNEL, bytes(data))
+    for i in range(8):
+        if (b & 0x80):
+            GPIO.output(PIN, GPIO.HIGH)
+            time.sleep(0.0008)
+            GPIO.output(PIN, GPIO.LOW)
+            time.sleep(0.0004)
+        else:
+            GPIO.output(PIN, GPIO.HIGH)
+            time.sleep(0.0004)
+            GPIO.output(PIN, GPIO.LOW)
+            time.sleep(0.0008)
+        b <<= 1
+        if (g & 0x80):
+            GPIO.output(PIN, GPIO.HIGH)
+            time.sleep(0.0008)
+            GPIO.output(PIN, GPIO.LOW)
+            time.sleep(0.0004)
+        else:
+            GPIO.output(PIN, GPIO.HIGH)
+            time.sleep(0.0004)
+            GPIO.output(PIN, GPIO.LOW)
+            time.sleep(0.0008)
+        g <<= 1
+        if (r & 0x80):
+            GPIO.output(PIN, GPIO.HIGH)
+            time.sleep(0.0008)
+            GPIO.output(PIN, GPIO.LOW)
+            time.sleep(0.0004)
+        else:
+            GPIO.output(PIN, GPIO.HIGH)
+            time.sleep(0.0004)
+            GPIO.output(PIN, GPIO.LOW)
+            time.sleep(0.0008)
+        r <<= 1
 
 # Flash white light for 5 seconds
 start_time = time.time()
@@ -21,3 +51,6 @@ while time.time() - start_time < 5:
     time.sleep(0.5)
     set_color(0, 0, 0)  # turn off
     time.sleep(0.5)
+
+# Cleanup GPIO pins
+GPIO.cleanup()
