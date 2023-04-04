@@ -1,56 +1,53 @@
-import RPi.GPIO as GPIO
 import time
+import wiringpi as wp
 
-# Setup GPIO pins
-GPIO.setmode(GPIO.BCM)
-GPIO.setwarnings(False)
-PIN = 10  # use GPIO pin 10 (BCM numbering)
-GPIO.setup(PIN, GPIO.OUT)
+# Configuration
+LED_PIN = 1  # Replace this with the WiringPi pin number for your data pin
+LED_COUNT = 30
+LED_BRIGHTNESS = 255
 
-# Define function to set LED color
-def set_color(r, g, b):
-    for i in range(8):
-        if (b & 0x80):
-            GPIO.output(PIN, GPIO.HIGH)
-            time.sleep(0.0008)
-            GPIO.output(PIN, GPIO.LOW)
-            time.sleep(0.0004)
-        else:
-            GPIO.output(PIN, GPIO.HIGH)
-            time.sleep(0.0004)
-            GPIO.output(PIN, GPIO.LOW)
-            time.sleep(0.0008)
-        b <<= 1
-        if (g & 0x80):
-            GPIO.output(PIN, GPIO.HIGH)
-            time.sleep(0.0008)
-            GPIO.output(PIN, GPIO.LOW)
-            time.sleep(0.0004)
-        else:
-            GPIO.output(PIN, GPIO.HIGH)
-            time.sleep(0.0004)
-            GPIO.output(PIN, GPIO.LOW)
-            time.sleep(0.0008)
-        g <<= 1
-        if (r & 0x80):
-            GPIO.output(PIN, GPIO.HIGH)
-            time.sleep(0.0008)
-            GPIO.output(PIN, GPIO.LOW)
-            time.sleep(0.0004)
-        else:
-            GPIO.output(PIN, GPIO.HIGH)
-            time.sleep(0.0004)
-            GPIO.output(PIN, GPIO.LOW)
-            time.sleep(0.0008)
-        r <<= 1
+# Initialize WiringPi
+wp.wiringPiSetup()
 
-# Flash white light for 5 seconds
-start_time = time.time()
-while time.time() - start_time < 5:
-    set_color(255, 255, 255)  # set white color
-    time.sleep(0.5)
-    set_color(0, 0, 0)  # turn off
-    time.sleep(0.5)
+# Initialize the LED strip
+wp.wiringPiSPISetup(0, 8000000)
+wp.pinMode(LED_PIN, wp.OUTPUT)
+wp.digitalWrite(LED_PIN, wp.LOW)
 
-# Cleanup GPIO pins
-GPIO.cleanup()
+def send_byte(byte):
+    wp.wiringPiSPIDataRW(0, bytearray([byte]))
+
+def send_color(red, green, blue):
+    send_byte(0b11100000 | (LED_BRIGHTNESS >> 3))
+    send_byte(blue)
+    send_byte(green)
+    send_byte(red)
+
+def activate_whitelight():
+    # Set all LEDs to white
+    for  in range(LED_COUNT):
+        send_color(255, 255, 255)
+
+    # Show the LEDs for 5 seconds
+    wp.digitalWrite(LED_PIN, wp.HIGH)
+    time.sleep(0.001)
+    wp.digitalWrite(LEDPIN, wp.LOW)
+    time.sleep(5)
+
+    # Turn off all LEDs
+    for  in range(LED_COUNT):
+        send_color(0, 0, 0)
+
+    # Show the LEDs
+    wp.digitalWrite(LED_PIN, wp.HIGH)
+    time.sleep(0.001)
+    wp.digitalWrite(LED_PIN, wp.LOW)
+
+# Main function
+def main():
+    while True:
+        activate_white_light()
+        time.sleep(1)
+
+if name == "main":
+    main()
