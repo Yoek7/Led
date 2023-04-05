@@ -1,26 +1,27 @@
 import time
-from periphery import PWM
+from periphery import GPIO
 
-# Replace with the appropriate PWM pin number
-pwm_pin_number = 13
+# Replace with the appropriate GPIO pin number
+gpio_pin_number = 13
 
-# Set the buzzer frequency (in Hz)
-buzzer_frequency = 1000
+# Initialize GPIO as output
+gpio_out = GPIO(gpio_pin_number, "out")
 
-# Initialize PWM
-pwm = PWM(pwm_pin_number)
-pwm.frequency = buzzer_frequency
+# Set the time delay (in seconds) for toggling the GPIO pin
+time_delay = 0.001
 
-# Set the duty cycle to 50% to turn on the buzzer
-pwm.duty_cycle = 0.5
-pwm.enable()
+try:
+    while True:
+        # Toggle the GPIO pin to create a square wave
+        gpio_out.write(True)
+        time.sleep(time_delay)
+        gpio_out.write(False)
+        time.sleep(time_delay)
 
-# Keep the buzzer on for 1 second
-time.sleep(1)
+except KeyboardInterrupt:
+    # Turn off the buzzer when the script is interrupted
+    gpio_out.write(False)
 
-# Turn off the buzzer
-pwm.duty_cycle = 0
-pwm.enable()
-
-# Close the PWM pin
-pwm.close()
+finally:
+    # Close the GPIO pin
+    gpio_out.close()
