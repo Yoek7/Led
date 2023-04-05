@@ -1,39 +1,26 @@
-import time
 import mraa
-import board
-import neopixel
+import time
 
-# Configuration
-LED_PIN = 18  # GPIO pin connected to the SK6812 LED
-LED_COUNT = 1  # Number of LEDs
-DELAY = 0.5  # Delay between color changes in seconds
+LED_PIN = 10  # Change this to the pin number connected to the LED
 
-# Color definitions
-COLORS = [
-    (255, 0, 0),  # Red
-    (0, 255, 0),  # Green
-    (0, 0, 255),  # Blue
-    (255, 255, 0),  # Yellow
-    (0, 255, 255),  # Cyan
-    (255, 0, 255),  # Magenta
-]
+led = mraa.Gpio(LED_PIN)
+led.dir(mraa.DIR_OUT)
 
-# Initialize the NeoPixel strip
-pixels = neopixel.NeoPixel(board.D18, LED_COUNT)
+while True:
+    # Flash the LED with red color
+    led.write(1)
+    time.sleep(0.5)
+    led.write(0)
+    time.sleep(0.5)
 
-def set_color(color):
-    for i in range(LED_COUNT):
-        pixels[i] = color
-    pixels.show()
+    # Flash the LED with green color
+    led.write(1)
+    time.sleep(0.5)
+    led.write(0)
+    time.sleep(0.5)
 
-try:
-    while True:
-        for color in COLORS:
-            set_color(color)
-            time.sleep(DELAY)
-
-except KeyboardInterrupt:
-    pass
-
-# Clean up
-set_color((0, 0, 0))
+    # Flash the LED with blue color
+    led.write(1)
+    time.sleep(0.5)
+    led.write(0)
+    time.sleep(0.5)
