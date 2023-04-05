@@ -1,53 +1,51 @@
 import time
-import wiringpi_rk as wp
+import RPi.GPIO as GPIO
 
 # Configuration
-LED_PIN = 22  # Replace this with the WiringPi pin number for your data pin
-LED_COUNT = 30
-LED_BRIGHTNESS = 255
+LED_PIN = 18  # GPIO pin connected to the SK6812 LED
+LED_COUNT = 1  # Number of LEDs
+DELAY = 0.5  # Delay between color changes in seconds
 
-# Initialize WiringPi
-wp.wiringPiSetup()
+# Color definitions
+COLORS = [
+    (255, 0, 0),  # Red
+    (0, 255, 0),  # Green
+    (0, 0, 255),  # Blue
+    (255, 255, 0),  # Yellow
+    (0, 255, 255),  # Cyan
+    (255, 0, 255),  # Magenta
+]
 
-# Initialize the LED strip
-wp.wiringPiSPISetup(0, 8000000)
-wp.pinMode(LED_PIN, wp.OUTPUT)
-wp.digitalWrite(LED_PIN, wp.LOW)
+# Initialize GPIO
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(LED_PIN, GPIO.OUT)
+GPIO.setwarnings(False)
 
-def send_byte(byte):
-    wp.wiringPiSPIDataRW(0, bytearray([byte]))
+# Initialize PWM
+pwm_red = GPIO.PWM(LED_PIN, 1000)
+pwm_green = GPIO.PWM(LED_PIN, 1000)
+pwm_blue = GPIO.PWM(LED_PIN, 1000)
 
-def send_color(red, green, blue):
-    send_byte(0b11100000 | (LED_BRIGHTNESS >> 3))
-    send_byte(blue)
-    send_byte(green)
-    send_byte(red)
+pwm_red.start(0)
+pwm_green.start(0)
+pwm_blue.start(0)
 
-def activate_whitelight():
-    # Set all LEDs to white
-    for i in range(LED_COUNT):
-        send_color(255, 255, 255)
+def set_color(red, green, blue):
+    pwm_red.ChangeDutyCycle(red / 255 * 100)
+    pwm_green.ChangeDutyCycle(green / 255 * 100)
+    pwm_blue.ChangeDutyCycle(blue / 255 * 100)
 
-    # Show the LEDs for 5 seconds
-    wp.digitalWrite(LED_PIN, wp.HIGH)
-    time.sleep(0.001)
-    wp.digitalWrite(LED_PIN, wp.LOW)
-    time.sleep(5)
-
-    # Turn off all LEDs
-    for i in range(LED_COUNT):
-        send_color(0, 0, 0)
-
-    # Show the LEDs
-    wp.digitalWrite(LED_PIN, wp.HIGH)
-    time.sleep(0.001)
-    wp.digitalWrite(LED_PIN, wp.LOW)
-
-# Main function
-def main():
+try:
     while True:
-        activate_whitelight()
-        time.sleep(1)
+        for color in COLORS:
+            set_color(*color)
+            time.sleep(DELAY)
 
-if __name__ == '__main__':
-    main()
+except KeyboardInterrupt:
+    pass
+
+# Clean up
+pwm_red.stop()
+pwm_green.stop()
+pwm_blue.stop()
+GPIO.cleanup()
