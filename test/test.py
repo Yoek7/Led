@@ -1,5 +1,5 @@
 import time
-from periphery import GPIO
+import GPIO
 
 # Define the GPIO pin number that the SK6812 LED is connected to
 LED_PIN = 18
