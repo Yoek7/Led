@@ -25,7 +25,7 @@ def send_color(red, green, blue):
 
 def activate_whitelight():
     # Set all LEDs to white
-    for  in range(LED_COUNT):
+    for i in range(LED_COUNT):
         send_color(255, 255, 255)
 
     # Show the LEDs for 5 seconds
