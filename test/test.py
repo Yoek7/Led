@@ -35,7 +35,7 @@ def activate_whitelight():
     time.sleep(5)
 
     # Turn off all LEDs
-    for  in range(LED_COUNT):
+    for i in range(LED_COUNT):
         send_color(0, 0, 0)
 
     # Show the LEDs
