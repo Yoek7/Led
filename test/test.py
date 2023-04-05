@@ -1,26 +1,19 @@
-import mraa
+from periphery import GPIO
 import time
-
-LED_PIN = 10  # Change this to the pin number connected to the LED
-
-led = mraa.Gpio(LED_PIN)
-led.dir(mraa.DIR_OUT)
-
+LED_Pin=73
+LED_GPIO=GPIO(LED_Pin,"out")
 while True:
-    # Flash the LED with red color
-    led.write(1)
-    time.sleep(0.5)
-    led.write(0)
-    time.sleep(0.5)
+    try:
+        LED_GPIO.write(True)
+        print("LED ON!")
+        time.sleep(1)
+        LED_GPIO.write(False)
+        print("LED OFF!")
+        time.sleep(1)
+    except KeyboardInterrupt:
+        LED_GPIO.write(False)
+        break
+    except IOError:
+        print("error")
 
-    # Flash the LED with green color
-    led.write(1)
-    time.sleep(0.5)
-    led.write(0)
-    time.sleep(0.5)
-
-    # Flash the LED with blue color
-    led.write(1)
-    time.sleep(0.5)
-    led.write(0)
-    time.sleep(0.5)
+LED_GPIO.close()
