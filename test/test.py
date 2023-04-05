@@ -1,19 +1,25 @@
-from periphery import GPIO
 import time
-LED_Pin=73
-LED_GPIO=GPIO(LED_Pin,"out")
-while True:
-    try:
-        LED_GPIO.write(True)
-        print("LED ON!")
-        time.sleep(1)
-        LED_GPIO.write(False)
-        print("LED OFF!")
-        time.sleep(1)
-    except KeyboardInterrupt:
-        LED_GPIO.write(False)
-        break
-    except IOError:
-        print("error")
 
-LED_GPIO.close()
+# Replace with the appropriate PWM pin number
+pwm_pin_number = 18
+
+# Set the buzzer frequency (in Hz)
+buzzer_frequency = 1000
+
+# Initialize PWM
+pwm = PWM(pwm_pin_number)
+pwm.frequency = buzzer_frequency
+
+# Set the duty cycle to 50% to turn on the buzzer
+pwm.duty_cycle = 0.5
+pwm.enable()
+
+# Keep the buzzer on for 1 second
+time.sleep(1)
+
+# Turn off the buzzer
+pwm.duty_cycle = 0
+pwm.enable()
+
+# Close the PWM pin
+pwm.close()
