@@ -1,7 +1,8 @@
 import time
+from periphery import PWM
 
 # Replace with the appropriate PWM pin number
-pwm_pin_number = 18
+pwm_pin_number = 13
 
 # Set the buzzer frequency (in Hz)
 buzzer_frequency = 1000
