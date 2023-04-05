@@ -1,5 +1,7 @@
 import time
-import RPi.GPIO as GPIO
+import mraa
+import board
+import neopixel
 
 # Configuration
 LED_PIN = 18  # GPIO pin connected to the SK6812 LED
@@ -16,36 +18,22 @@ COLORS = [
     (255, 0, 255),  # Magenta
 ]
 
-# Initialize GPIO
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(LED_PIN, GPIO.OUT)
-GPIO.setwarnings(False)
+# Initialize the NeoPixel strip
+pixels = neopixel.NeoPixel(board.D18, LED_COUNT)
 
-# Initialize PWM
-pwm_red = GPIO.PWM(LED_PIN, 1000)
-pwm_green = GPIO.PWM(LED_PIN, 1000)
-pwm_blue = GPIO.PWM(LED_PIN, 1000)
-
-pwm_red.start(0)
-pwm_green.start(0)
-pwm_blue.start(0)
-
-def set_color(red, green, blue):
-    pwm_red.ChangeDutyCycle(red / 255 * 100)
-    pwm_green.ChangeDutyCycle(green / 255 * 100)
-    pwm_blue.ChangeDutyCycle(blue / 255 * 100)
+def set_color(color):
+    for i in range(LED_COUNT):
+        pixels[i] = color
+    pixels.show()
 
 try:
     while True:
         for color in COLORS:
-            set_color(*color)
+            set_color(color)
             time.sleep(DELAY)
 
 except KeyboardInterrupt:
     pass
 
 # Clean up
-pwm_red.stop()
-pwm_green.stop()
-pwm_blue.stop()
-GPIO.cleanup()
+set_color((0, 0, 0))
