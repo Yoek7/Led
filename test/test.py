@@ -1,8 +1,8 @@
 import time
-import wiringpi as wp
+import wiringpi_rk as wp
 
 # Configuration
-LED_PIN = 1  # Replace this with the WiringPi pin number for your data pin
+LED_PIN = 22  # Replace this with the WiringPi pin number for your data pin
 LED_COUNT = 30
 LED_BRIGHTNESS = 255
 
@@ -31,7 +31,7 @@ def activate_whitelight():
     # Show the LEDs for 5 seconds
     wp.digitalWrite(LED_PIN, wp.HIGH)
     time.sleep(0.001)
-    wp.digitalWrite(LEDPIN, wp.LOW)
+    wp.digitalWrite(LED_PIN, wp.LOW)
     time.sleep(5)
 
     # Turn off all LEDs
@@ -46,8 +46,8 @@ def activate_whitelight():
 # Main function
 def main():
     while True:
-        activate_white_light()
+        activate_whitelight()
         time.sleep(1)
 
-if name == "main":
+if __name__ == '__main__':
     main()
